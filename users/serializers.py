@@ -3,6 +3,7 @@ from .models import User
 from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.ReadOnlyField()
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'role')
@@ -12,13 +13,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'role')
+        fields = ('username', 'password', 'email')
 
     def create(self, validated_data):
         user = User.objects.create(
             username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            role=validated_data.get('role', 'Member')
+            email=validated_data.get('email', '')
         )
         user.set_password(validated_data['password'])
         user.save()

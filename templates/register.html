@@ -21,13 +21,6 @@
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select class="form-select" id="role">
-                            <option value="Member">Member</option>
-                            <option value="Admin">Admin</option>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>
                 <div class="text-center mt-3">
@@ -46,7 +39,6 @@ document.getElementById('register-form').addEventListener('submit', async functi
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
     const errorDiv = document.getElementById('register-error');
     errorDiv.classList.add('hidden');
 
@@ -54,7 +46,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         const response = await fetch('/api/users/register/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password, role })
+            body: JSON.stringify({ username, email, password })
         });
         
         if (response.ok) {
