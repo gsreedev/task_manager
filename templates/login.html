@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Login - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Login</h3>
+                <div id="login-error" class="alert alert-danger hidden"></div>
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="/register/">Don't have an account? Register here.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('login-error');
+    errorDiv.classList.add('hidden');
+
+    try {
+        const response = await fetch('/api/token/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            setAuthToken(data.access, data.refresh);
+            
+            // Fetch user profile to get role and username
+            const profileRes = await fetchWithAuth('/api/users/profile/');
+            if (profileRes.ok) {
+                const profile = await profileRes.json();
+                localStorage.setItem('user_role', profile.role);
+                localStorage.setItem('user_id', profile.id);
+                localStorage.setItem('user_name', profile.username);
+            }
+            
+            window.location.href = '/';
+        } else {
+            errorDiv.innerText = data.detail || 'Invalid credentials';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (err) {
+        errorDiv.innerText = 'Server error. Try again.';
+        errorDiv.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}

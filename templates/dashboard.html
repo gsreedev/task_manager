@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Task Manager{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+<div class="row" id="dashboard-stats">
+    <!-- Stats will be loaded here via JS -->
+    <div class="col-md-3 mb-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Tasks</h5>
+                <h2 id="stat-total">-</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Pending</h5>
+                <h2 id="stat-pending">-</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Completed</h5>
+                <h2 id="stat-completed">-</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Overdue</h5>
+                <h2 id="stat-overdue">-</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function loadDashboard() {
+    try {
+        const response = await fetchWithAuth('/api/tasks/dashboard/');
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('stat-total').innerText = data.total;
+            document.getElementById('stat-pending').innerText = data.pending;
+            document.getElementById('stat-completed').innerText = data.completed;
+            document.getElementById('stat-overdue').innerText = data.overdue;
+        }
+    } catch (err) {
+        console.error('Failed to load dashboard stats', err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (getAuthToken()) {
+        loadDashboard();
+    }
+});
+</script>
+{% endblock %}
