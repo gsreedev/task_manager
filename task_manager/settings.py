@@ -93,8 +93,8 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get("postgresql://postgres:ivaYXuJLMfVJjyWjlztYkgPqTxILCBnS@postgres.railway.internal:5432/railway")
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL", "postgresql://postgres:ivaYXuJLMfVJjyWjlztYkgPqTxILCBnS@postgres.railway.internal:5432/railway")
     )
 }
 
