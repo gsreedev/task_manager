@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+        /* Navbar Styling */
+        .navbar {
+            padding: 20px 50px;
+            background-color: transparent;
+        }
+        .btn-logo {
+            background-color: #00A6A6;
+            color: white;
+            border-radius: 25px;
+            padding: 8px 30px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            text-decoration: none;
+        }
+        .btn-logo:hover {
+            background-color: #008a8a;
+            color: white;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        /* Button Styling */
+        .btn-outline-teal {
+            color: #00A6A6;
+            border: 2px solid #00A6A6;
+            border-radius: 25px;
+            padding: 8px 25px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-outline-teal:hover {
+            background-color: #00A6A6;
+            color: white;
+        }
+        .btn-teal {
+            background-color: #00A6A6;
+            color: white;
+            border: 2px solid #00A6A6;
+            border-radius: 25px;
+            padding: 8px 25px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-teal:hover {
+            background-color: #008a8a;
+            border-color: #008a8a;
+            color: white;
+        }
+        
+        /* Dark Mode Styling */
+        html[data-bs-theme="dark"] body {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        html[data-bs-theme="dark"] .hero-title {
+            color: #f8f9fa;
+        }
+        html[data-bs-theme="dark"] .hero-subtitle {
+            color: #ced4da;
+        }
+        html[data-bs-theme="dark"] .navbar {
+            background-color: #212529;
+        }
+
+        /* Hero Section Styling */
+        .hero-section {
+            padding: 60px 50px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+        }
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #5C4033; /* Dark brownish color as in the image */
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .hero-subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            max-width: 90%;
+            line-height: 1.6;
+        }
+        .btn-more {
+            background-color: #00A6A6;
+            color: white;
+            border-radius: 25px;
+            padding: 10px 40px;
+            font-weight: 500;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .btn-more:hover {
+            background-color: #008a8a;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .hero-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            .hero-section {
+                padding: 40px 20px;
+                text-align: center;
+                flex-direction: column-reverse;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+                margin-top: 30px;
+            }
+            .hero-subtitle {
+                margin: 0 auto 30px auto;
+            }
+            .nav-links {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar d-flex justify-content-end align-items-center">
+        <div class="nav-links d-flex gap-3 align-items-center">
+            <button class="btn btn-sm btn-outline-secondary" id="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+            <a href="/login/" class="btn-outline-teal">Login</a>
+            <a href="/register/" class="btn-teal">Register</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="container-fluid hero-section">
+        <div class="row w-100 align-items-center">
+            <!-- Text Content -->
+            <div class="col-md-5 offset-md-1">
+                <h1 class="hero-title">TASK<br>MANAGEMENT</h1>
+                <p class="hero-subtitle">
+                    Organize your projects, track progress, and collaborate seamlessly with our intuitive task management platform. Built to help your team succeed and stay on top of deadlines. Empower your workflow today.
+                </p>
+            </div>
+            <!-- Illustration -->
+            <div class="col-md-6 text-center">
+                {% load static %}
+                <img src="{% static 'images/hero_illustration.png' %}" alt="Task Management Illustration" class="hero-image">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Auth Check & Theme Script -->
+    <script>
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const currentTheme = htmlEl.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('theme-toggle');
+            if (btn) {
+                btn.innerText = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+                if(theme === 'dark') {
+                    btn.classList.remove('btn-outline-secondary');
+                    btn.classList.add('btn-outline-light');
+                } else {
+                    btn.classList.remove('btn-outline-light');
+                    btn.classList.add('btn-outline-secondary');
+                }
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            updateThemeButton(savedTheme);
+        }
+
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                // If logged in, redirect to dashboard
+                window.location.href = '/dashboard/';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

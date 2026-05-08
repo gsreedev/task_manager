@@ -22,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto gap-2 py-2 py-lg-0" id="nav-links">
                     <li class="nav-item hidden" id="nav-dashboard">
-                        <a class="btn btn-outline-light" href="/">Dashboard</a>
+                        <a class="btn btn-outline-light" href="/dashboard/">Dashboard</a>
                     </li>
                     <li class="nav-item hidden" id="nav-projects">
                         <a class="btn btn-outline-light" href="/projects/">Projects</a>
@@ -148,7 +148,7 @@
         function checkAuth() {
             const token = getAuthToken();
             const currentPath = window.location.pathname;
-            const publicPaths = ['/login/', '/register/'];
+            const publicPaths = ['/login/', '/register/', '/'];
 
             if (token) {
                 document.getElementById('nav-dashboard').classList.remove('hidden');
@@ -163,7 +163,7 @@
                 }
 
                 if (publicPaths.includes(currentPath)) {
-                    window.location.href = '/';
+                    window.location.href = '/dashboard/';
                 }
             } else {
                 if (!publicPaths.includes(currentPath)) {
