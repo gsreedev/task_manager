@@ -31,10 +31,9 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Members</label>
-                        <select multiple class="form-select" id="project-members">
-                            <!-- Populated by JS -->
-                        </select>
-                        <small class="text-muted">Hold Ctrl/Cmd to select multiple.</small>
+                        <div id="project-members-checklist" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Populated by JS with checkboxes -->
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>
@@ -128,8 +127,8 @@ document.getElementById('project-form').addEventListener('submit', async functio
     e.preventDefault();
     const name = document.getElementById('project-name').value;
     const description = document.getElementById('project-desc').value;
-    const mSelect = document.getElementById('project-members');
-    const members = Array.from(mSelect.selectedOptions).map(opt => parseInt(opt.value));
+    const checkedCreate = document.querySelectorAll('.member-checkbox-create:checked');
+    const members = Array.from(checkedCreate).map(cb => parseInt(cb.value));
 
     try {
         const response = await fetchWithAuth('/api/projects/', {
@@ -140,6 +139,10 @@ document.getElementById('project-form').addEventListener('submit', async functio
             const modal = bootstrap.Modal.getInstance(document.getElementById('projectModal'));
             modal.hide();
             loadProjects();
+            // clear form
+            document.getElementById('project-name').value = '';
+            document.getElementById('project-desc').value = '';
+            document.querySelectorAll('.member-checkbox-create').forEach(cb => cb.checked = false);
         } else {
             alert("Failed to create project. Make sure you're an Admin.");
         }
@@ -156,24 +159,32 @@ async function loadFormOptions() {
         const usersRes = await fetchWithAuth('/api/users/');
         if (usersRes.ok) {
             window.allUsers = await usersRes.json();
-            const mSelect = document.getElementById('project-members');
+            const createChecklist = document.getElementById('project-members-checklist');
             const editChecklistContainer = document.getElementById('edit-project-members-checklist');
-            mSelect.innerHTML = '';
+            createChecklist.innerHTML = '';
             editChecklistContainer.innerHTML = '';
             window.allUsers.forEach(u => {
-                const opt = `<option value="${u.id}">${u.username} (${u.role})</option>`;
-                mSelect.innerHTML += opt;
-                
-                // Create checklist item
-                const checklistHtml = `
+                // Create checklist item for create form
+                const createChecklistHtml = `
                     <div class="form-check mb-2">
-                        <input class="form-check-input member-checkbox" type="checkbox" value="${u.id}" id="member_${u.id}">
-                        <label class="form-check-label" for="member_${u.id}">
+                        <input class="form-check-input member-checkbox-create" type="checkbox" value="${u.id}" id="create_member_${u.id}">
+                        <label class="form-check-label" for="create_member_${u.id}">
                             ${u.username} <small class="text-muted">(${u.role})</small>
                         </label>
                     </div>
                 `;
-                editChecklistContainer.innerHTML += checklistHtml;
+                createChecklist.innerHTML += createChecklistHtml;
+
+                // Create checklist item for edit modal
+                const editChecklistHtml = `
+                    <div class="form-check mb-2">
+                        <input class="form-check-input member-checkbox-edit" type="checkbox" value="${u.id}" id="edit_member_${u.id}">
+                        <label class="form-check-label" for="edit_member_${u.id}">
+                            ${u.username} <small class="text-muted">(${u.role})</small>
+                        </label>
+                    </div>
+                `;
+                editChecklistContainer.innerHTML += editChecklistHtml;
             });
         }
     } catch (err) {
