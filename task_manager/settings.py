@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import dj_database_url
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -96,23 +97,17 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-        )
-    }
-else:
-    # Fallback to local sqlite for development when DATABASE_URL is not set
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+if not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "DATABASE_URL environment variable is not set. Attach Railway PostgreSQL to the web service or set DATABASE_URL."
+    )
 
-print("DEBUG: DATABASE_URL =", DATABASE_URL)
-print("DEBUG: DATABASES['default'] ENGINE =", DATABASES['default'].get('ENGINE'))
+DATABASES = {
+    'default': dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+    )
+}
 
 
 
