@@ -78,6 +78,16 @@ async function loadProjects() {
             container.innerHTML = '';
             const role = localStorage.getItem('user_role');
             window.allProjects = projects;
+            if (!projects || projects.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <h3 class="text-muted">No Projects</h3>
+                        <p class="text-muted">There are no projects to display.</p>
+                    </div>
+                `;
+                return;
+            }
+
             projects.forEach(p => {
                 const deleteBtn = role === 'Admin' ? `<button class="btn btn-sm btn-danger float-end" onclick="deleteProject(${p.id})">Delete</button>` : '';
                 const editMembersBtn = role === 'Admin' ? `<button class="btn btn-sm btn-outline-secondary float-end me-2" onclick="openEditMembersModal(${p.id})">Members</button>` : '';

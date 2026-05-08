@@ -80,6 +80,18 @@ async function loadTasks() {
             const role = localStorage.getItem('user_role');
             const userId = parseInt(localStorage.getItem('user_id'));
 
+            if (!tasks || tasks.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <h3 class="text-muted">No Tasks</h3>
+                            <p class="text-muted">There are no tasks to display.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
             tasks.forEach(t => {
                 let badgeClass = 'bg-secondary';
                 if (t.status === 'In Progress') badgeClass = 'bg-warning';
