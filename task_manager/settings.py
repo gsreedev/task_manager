@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 import dj_database_url
 from datetime import timedelta
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,11 +94,13 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get("DATABASE_URL", "postgresql://postgres:ivaYXuJLMfVJjyWjlztYkgPqTxILCBnS@postgres.railway.internal:5432/railway")
+        default=os.getenv("DATABASE_URL")
     )
 }
+
 
 
 # Password validation
