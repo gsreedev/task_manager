@@ -305,16 +305,20 @@ async function loadRecentTasks() {
             const container = document.getElementById('recent-tasks-container');
             container.innerHTML = '';
             
-            if (tasks.length === 0) {
+            // Filter tasks to show only those assigned to the current user
+            const userId = parseInt(localStorage.getItem('user_id'));
+            const assignedToMe = tasks.filter(task => task.assignee === userId);
+            
+            if (assignedToMe.length === 0) {
                 container.innerHTML = '<p class="text-muted small">No tasks assigned.</p>';
                 return;
             }
             
-            // Show top 4 tasks
-            tasks.slice(0, 4).forEach(task => {
+            // Show top 4 tasks assigned to the current user
+            assignedToMe.slice(0, 4).forEach(task => {
                 const dateStr = task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date';
-                // Find project name if available, else just show task status
-                let projectText = task.project ? `Project ID: ${task.project}` : task.status;
+                // Use project name from project_detail, fallback to ID
+                let projectText = task.project_detail ? task.project_detail.name : `Project ID: ${task.project}`;
                 
                 const html = `
                     <div class="task-item">
@@ -342,15 +346,19 @@ async function loadRecentProjects() {
             const projects = await response.json();
             const container = document.getElementById('recent-projects-container');
             
-            // Keep the "New Project" button
-            let newBtnHtml = `
-                <div class="project-card new-project-btn" onclick="window.location.href='/projects/'">
-                    <i class="bi bi-plus-lg"></i> New Project
-                </div>
-            `;
+            const userRole = localStorage.getItem('user_role');
+            let htmlContent = '';
+            
+            // Only show "+ New Project" button for admins, not for members
+            if (userRole === 'Admin') {
+                htmlContent = `
+                    <div class="project-card new-project-btn" onclick="window.location.href='/projects/'">
+                        <i class="bi bi-plus-lg"></i> New Project
+                    </div>
+                `;
+            }
             
             const colors = ['#4f46e5', '#f59e0b', '#ec4899', '#10b981', '#f97316'];
-            let htmlContent = newBtnHtml;
             
             projects.slice(0, 5).forEach((proj, idx) => {
                 const color = colors[idx % colors.length];
@@ -367,6 +375,12 @@ async function loadRecentProjects() {
                     </div>
                 `;
             });
+            
+            // If member has no projects, show a helpful message
+            if (userRole === 'Member' && projects.length === 0) {
+                htmlContent = '<p class="text-muted small">You are not assigned to any projects yet.</p>';
+            }
+            
             container.innerHTML = htmlContent;
         }
     } catch (err) {

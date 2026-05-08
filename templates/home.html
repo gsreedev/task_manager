@@ -209,17 +209,8 @@
             updateThemeButton(savedTheme);
         }
 
-        function checkAuth() {
-            const token = localStorage.getItem('access_token');
-            if (token) {
-                // If logged in, redirect to dashboard
-                window.location.href = '/dashboard/';
-            }
-        }
-        
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
-            checkAuth();
         });
     </script>
 </body>
